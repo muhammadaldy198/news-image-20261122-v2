@@ -13,6 +13,9 @@ pins + 3 headline columns + UTC timeline + DATE CHECK box + footer.
 Run:  ~/workspace/office/.venv/bin/python draw.py [out.png]
 Fonts are render-time tools only (system Liberation/DejaVu); they are NOT
 part of the entry. Output is deterministic: same bytes every run.
+
+v2: +4 illustrated cards (Verstappen, Cikande, Bahrain, Hong Kong);
+timeline wording fixed; quadcopter drones.
 """
 
 import sys
@@ -204,7 +207,7 @@ NUMBERS = [
 
 # UTC timeline: (label, text) — only times the research actually sources.
 TIMELINE = [
-    ("04:31", "Pugh finishes Hormuz swim"),
+    ("04:31", "Pugh's Hormuz swim reported"),
     ("~05:00", "Dymer block hit"),
     ("~05:00", "Verstappen wins in Vegas"),
     ("11:00", "Cikande search paused"),
@@ -293,17 +296,17 @@ def region_counts():
 
 # ---------------------------------------------------------------- sections
 def draw_kicker(draw):
-    draw.rectangle([0, 0, W, 24], fill=NAVY)
+    draw.rectangle([0, 0, W, 20], fill=NAVY)
     f = font(12, bold=True)
-    centre(draw, 5, "THE WORLD IN ONE DAY  —  35 STORIES  ·  7 REGIONS  ·  "
+    centre(draw, 3, "THE WORLD IN ONE DAY  —  35 STORIES  ·  7 REGIONS  ·  "
                     "EVERY ONE DATED SUNDAY 22 NOVEMBER 2026", f, WHITE)
 
 
 def draw_masthead(draw):
-    draw.line([16, 110, W - 16, 110], fill=INK, width=2)
-    draw.line([16, 113, W - 16, 113], fill=INK, width=1)
-    centre(draw, 26, "THE WORLD", font(54, bold=True, serif=True), INK)
-    centre(draw, 84, "SUNDAY, 22 NOVEMBER 2026",
+    draw.line([16, 106, W - 16, 106], fill=INK, width=2)
+    draw.line([16, 109, W - 16, 109], fill=INK, width=1)
+    centre(draw, 22, "THE WORLD", font(54, bold=True, serif=True), INK)
+    centre(draw, 80, "SUNDAY, 22 NOVEMBER 2026",
            font(24, bold=True, serif=True), RED)
 
 
@@ -312,16 +315,16 @@ def draw_numbers(draw):
     for i, (num, label) in enumerate(NUMBERS):
         cx = 16 + cell * i + cell // 2
         fnum = font(24, bold=True, serif=True)
-        draw.text((cx - text_w(draw, num, fnum) / 2, 114), num,
+        draw.text((cx - text_w(draw, num, fnum) / 2, 112), num,
                   font=fnum, fill=NAVY)
         flab = font(10)
         for j, line in enumerate(label.split("\n")):
-            draw.text((cx - text_w(draw, line, flab) / 2, 140 + j * 11),
+            draw.text((cx - text_w(draw, line, flab) / 2, 138 + j * 11),
                       line, font=flab, fill=GREY)
         if i:
-            draw.line([16 + cell * i, 118, 16 + cell * i, 158],
+            draw.line([16 + cell * i, 114, 16 + cell * i, 152],
                       fill=(210, 200, 175), width=1)
-    draw.line([16, 166, W - 16, 166], fill=RULE, width=1)
+    draw.line([16, 160, W - 16, 160], fill=RULE, width=1)
 
 
 def draw_region_bar(draw):
@@ -330,8 +333,8 @@ def draw_region_bar(draw):
     parts = []
     for code in ("EU", "AS", "ME", "AM", "AF", "OC", "WD"):
         parts.append(f"{REGION_NAMES[code]} {counts.get(code, 0)}")
-    centre(draw, 170, "  ·  ".join(parts), font(13, bold=True), INK)
-    draw.line([16, 188, W - 16, 188], fill=INK, width=2)
+    centre(draw, 164, "  ·  ".join(parts), font(13, bold=True), INK)
+    draw.line([16, 182, W - 16, 182], fill=INK, width=2)
 
 
 # ------------------------------------------------------------- hero art
@@ -339,7 +342,7 @@ def paint_cop31(draw, x, y, w, h):
     """Globe over an empty table; the pact document crossed out in red."""
     draw.rectangle([x, y, x + w, y + h], fill=(221, 232, 240))
     # globe
-    gx, gy, r = x + w // 2 - 30, y + 58, 42
+    gx, gy, r = x + w // 2 - 30, y + 54, 38
     draw.ellipse([gx - r, gy - r, gx + r, gy + r], fill=(168, 200, 220),
                  outline=NAVY, width=2)
     draw.ellipse([gx - r // 2, gy - r, gx + r // 2, gy + r], outline=NAVY)
@@ -377,8 +380,8 @@ def paint_merkury(draw, x, y, w, h):
                       (x + 196, y + 18, 14)):
         draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=(140, 140, 140))
     # flames
-    for fx, fh, col in ((150, 34, (240, 120, 20)), (170, 48, (250, 180, 30)),
-                        (190, 30, (240, 120, 20))):
+    for fx, fh, col in ((150, 38, (240, 120, 20)), (170, 44, (250, 180, 30)),
+                        (190, 34, (240, 120, 20))):
         draw.polygon([(x + fx - 12, y + h - 52), (x + fx, y + h - 52 - fh),
                       (x + fx + 12, y + h - 52)], fill=col)
     # capsized hull: deck line at top, superstructure hanging below it
@@ -395,15 +398,23 @@ def paint_merkury(draw, x, y, w, h):
 def paint_dymer(draw, x, y, w, h):
     """Apartment block with a collapsed section; drones cross the sky."""
     draw.rectangle([x, y, x + w, y + h], fill=(232, 228, 216))
-    # drones: small X shapes, kept right of the top-left caption
+    # drones: quadcopter silhouettes, kept right of the top-left caption
     for dx, dy in ((170, 12), (250, 10), (210, 32)):
-        draw.line([x + dx - 7, y + dy - 7, x + dx + 7, y + dy + 7],
-                  fill=INK, width=2)
-        draw.line([x + dx - 7, y + dy + 7, x + dx + 7, y + dy - 7],
-                  fill=INK, width=2)
-        draw.ellipse([x + dx - 2, y + dy - 2, x + dx + 2, y + dy + 2], fill=RED)
+        cx, cy = x + dx, y + dy
+        # 4 arms out to the rotors
+        for ax, ay in ((-9, -5), (9, -5), (-9, 5), (9, 5)):
+            draw.line([cx, cy, cx + ax, cy + ay], fill=INK, width=1)
+        # 4 rotors (horizontal ellipses) at the arm ends
+        for ax, ay in ((-9, -5), (9, -5), (-9, 5), (9, 5)):
+            draw.ellipse([cx + ax - 5, cy + ay - 1, cx + ax + 5, cy + ay + 1],
+                         fill=(70, 70, 70))
+        # body + 2 legs
+        draw.rounded_rectangle([cx - 5, cy - 2, cx + 5, cy + 3], radius=2,
+                               fill=INK)
+        draw.line([cx - 3, cy + 3, cx - 3, cy + 6], fill=INK, width=1)
+        draw.line([cx + 3, cy + 3, cx + 3, cy + 6], fill=INK, width=1)
     # buildings
-    for bx, bw, bh in ((18, 70, 84), (228, 76, 96)):
+    for bx, bw, bh in ((18, 70, 74), (228, 76, 96)):
         draw.rectangle([x + bx, y + h - bh, x + bx + bw, y + h],
                        fill=(90, 100, 116))
         for wy in range(y + h - bh + 10, y + h - 8, 16):
@@ -428,9 +439,119 @@ def paint_dymer(draw, x, y, w, h):
 PAINTERS = {1: paint_cop31, 2: paint_merkury, 3: paint_dymer}
 
 
+# ------------------------------------------------------- illustrated cards (v2)
+def paint_verstappen(draw, x, y, w, h):
+    """Night race in Las Vegas: F1 car, chequered flag, speed lines."""
+    draw.rectangle([x, y, x + w, y + h], fill=(28, 32, 56))
+    draw.rectangle([x, y + h - 18, x + w, y + h], fill=(50, 50, 56))
+    # speed lines
+    for ly, lx in ((8, 10), (14, 14), (20, 10)):
+        draw.line([x + 2, y + ly, x + lx, y + ly], fill=WHITE, width=1)
+    # chequered flag, top right (3x2)
+    for r in range(2):
+        for c in range(3):
+            fill = WHITE if (r + c) % 2 == 0 else INK
+            draw.rectangle([x + 38 + c * 4, y + 4 + r * 4,
+                            x + 42 + c * 4, y + 8 + r * 4], fill=fill)
+    draw.line([x + 38, y + 4, x + 38, y + 16], fill=WHITE, width=1)
+    # F1 car silhouette
+    draw.polygon([(x + 4, y + 36), (x + 10, y + 30), (x + 26, y + 28),
+                  (x + 42, y + 30), (x + 50, y + 34), (x + 50, y + 38),
+                  (x + 4, y + 38)], fill=(20, 60, 160))
+    draw.rectangle([x + 44, y + 24, x + 52, y + 28], fill=(20, 60, 160))
+    draw.ellipse([x + 26, y + 24, x + 32, y + 30], fill=(250, 200, 40))
+    draw.ellipse([x + 10, y + 36, x + 18, y + 44], fill=INK)
+    draw.ellipse([x + 34, y + 36, x + 42, y + 44], fill=INK)
+
+
+def paint_cikande(draw, x, y, w, h):
+    """Factory at dusk, smoke, fire-lit windows, a searchlight beam.
+    Respectful: no body bags drawn."""
+    draw.rectangle([x, y, x + w, y + h], fill=(232, 220, 200))
+    # searchlight beam from top right
+    draw.polygon([(x + 50, y), (x + w, y), (x + 38, y + 34),
+                  (x + 30, y + 34)], fill=(250, 238, 170))
+    # factory + chimney
+    draw.rectangle([x + 6, y + 30, x + 38, y + h], fill=(120, 110, 95))
+    draw.rectangle([x + 38, y + 18, x + 44, y + h], fill=(100, 92, 78))
+    # smoke puffs above the chimney
+    for cx, cy, r in ((41, 10, 5), (46, 6, 4), (36, 6, 4)):
+        draw.ellipse([x + cx - r, y + cy - r, x + cx + r, y + cy + r],
+                     fill=(150, 150, 150))
+    # fire-lit windows
+    draw.rectangle([x + 12, y + 38, x + 20, y + 46], fill=(240, 120, 20))
+    draw.rectangle([x + 26, y + 38, x + 32, y + 46], fill=(240, 120, 20))
+
+
+def paint_bahrain(draw, x, y, w, h):
+    """Radar dish under a night sky; missile streaks; CLAIM tag."""
+    draw.rectangle([x, y, x + w, y + h], fill=(24, 48, 60))
+    # radar dish + mast
+    draw.polygon([(x + 8, y + 30), (x + 14, y + 18), (x + 28, y + 18),
+                  (x + 24, y + 30)], fill=WHITE)
+    draw.line([x + 18, y + 30, x + 18, y + 48], fill=WHITE, width=2)
+    draw.rectangle([x + 12, y + 48, x + 24, y + 52], fill=WHITE)
+    # missile streaks
+    draw.line([x + 30, y + 8, x + 52, y + 30], fill=(240, 120, 20), width=3)
+    draw.line([x + 36, y + 4, x + 50, y + 18], fill=(250, 180, 30), width=2)
+    draw.ellipse([x + 48, y + 26, x + 54, y + 32], fill=(250, 180, 30))
+    # CLAIM tag, top left — the claim framing must be visible
+    draw.rectangle([x + 2, y + 2, x + 36, y + 13], fill=RED)
+    draw.text((x + 4, y + 2), "CLAIM", font=font(9, bold=True), fill=WHITE)
+
+
+def paint_hongkong(draw, x, y, w, h):
+    """Ballot box under the turnout number; city silhouettes below."""
+    draw.rectangle([x, y, x + w, y + h], fill=(240, 235, 220))
+    draw.text((x + 4, y + 4), "98.79%", font=font(13, bold=True), fill=NAVY)
+    # city silhouettes
+    draw.rectangle([x + 2, y + 44, x + 14, y + h], fill=(180, 175, 160))
+    draw.rectangle([x + 42, y + 40, x + w - 2, y + h], fill=(180, 175, 160))
+    # ballot paper going in
+    draw.rectangle([x + 26, y + 20, x + 30, y + 28], fill=WHITE,
+                   outline=GREY)
+    # ballot box + navy slot
+    draw.rectangle([x + 14, y + 26, x + 42, y + 50], fill=WHITE,
+                   outline=NAVY)
+    draw.rectangle([x + 22, y + 28, x + 34, y + 32], fill=NAVY)
+    # small red check
+    draw.line([x + 46, y + 46, x + 49, y + 49], fill=RED, width=2)
+    draw.line([x + 49, y + 49, x + 54, y + 42], fill=RED, width=2)
+
+
+CARDS = [
+    (paint_verstappen, "Verstappen wins chaotic Las Vegas GP",
+     "35 lead changes; beats Norris by 0.639s."),
+    (paint_cikande, "Cikande fire: 24 body bags recovered",
+     "3 confirmed dead; dozens still missing."),
+    (paint_bahrain, "Iran claims US-base strikes in Bahrain",
+     "Claim unconfirmed; civilian site hit, 2 hurt."),
+    (paint_hongkong, "Hong Kong vote: record 98.79% turnout",
+     "Subsector poll, not a general election."),
+]
+
+
+def draw_cards(draw, y0=814):
+    """One row of 4 illustrated mini-cards (v2)."""
+    cw, gap, ch = 239, 12, 68
+    for i, (painter, headline, caption) in enumerate(CARDS):
+        x = 16 + i * (cw + gap)
+        draw.rectangle([x, y0, x + cw, y0 + ch], fill=PANEL, outline=RULE)
+        painter(draw, x + 6, y0 + 6, 56, 56)
+        tx, tw = x + 68, 165
+        hl = wrap(draw, headline, font(12, bold=True), tw)[:2]
+        for j, line in enumerate(hl):
+            draw.text((tx, y0 + 6 + j * 14), line, font=font(12, bold=True),
+                      fill=INK)
+        cap = wrap(draw, caption, font(10), tw)[:2]
+        cy = y0 + 6 + len(hl) * 14 + 2
+        for j, line in enumerate(cap):
+            draw.text((tx, cy + j * 12), line, font=font(10), fill=GREY)
+
+
 def draw_heroes(draw):
     pw, gap = 322, 12
-    y0, ph = 192, 236
+    y0, ph = 186, 218
     for i, hero in enumerate(HEROES):
         x = 16 + i * (pw + gap)
         draw.rectangle([x, y0, x + pw, y0 + ph], fill=PANEL, outline=RULE)
@@ -443,10 +564,10 @@ def draw_heroes(draw):
                   font=nf, fill=WHITE)
         draw.text((bx + 30, by + 4), hero["kicker"], font=font(11, bold=True),
                   fill=RED)
-        PAINTERS[hero["num"]](draw, x + 8, y0 + 34, pw - 16, 118)
+        PAINTERS[hero["num"]](draw, x + 8, y0 + 34, pw - 16, 96)
         hl = wrap(draw, hero["headline"], font(19, bold=True, serif=True),
                   pw - 20)
-        hy = y0 + 158
+        hy = y0 + 136
         for j, line in enumerate(hl[:2]):
             draw.text((x + 10, hy + j * 22), line,
                       font=font(19, bold=True, serif=True), fill=INK)
@@ -456,17 +577,17 @@ def draw_heroes(draw):
 
 # ---------------------------------------------------------------- map zone
 def draw_map_zone(draw):
-    draw.text((16, 434), "WHERE IT HAPPENED — THE TOP 10, PINNED",
+    draw.text((16, 410), "WHERE IT HAPPENED — THE TOP 10, PINNED",
               font=font(13, bold=True), fill=NAVY)
     # --- legend (left) ---
-    lx, ly = 16, 456
+    lx, ly = 16, 432
     draw.text((lx, ly), "TOP 10", font=font(12, bold=True), fill=RED)
     for num, _, _, label in STORIES[:10]:
-        yy = ly + 20 + (num - 1) * 13
+        yy = ly + 20 + (num - 1) * 11
         draw.text((lx, yy), f"{num}.", font=font(11, bold=True), fill=NAVY)
         draw.text((lx + 20, yy), label, font=font(11), fill=INK)
     # --- map (centre): drawn on its own layer so polygons clip cleanly ---
-    mx, my, mw, mh = 290, 456, 444, 140
+    mx, my, mw, mh = 290, 432, 444, 112
     layer = Image.new("RGB", (mw, mh), SEA)
     md = ImageDraw.Draw(layer)
     lon0, lon1, lat0, lat1 = -180.0, 180.0, 72.0, -50.0
@@ -518,7 +639,7 @@ def draw_map_zone(draw):
         ("5", "storeys of the Dymer block"),
     ]
     for i, (num, label) in enumerate(extra):
-        yy = ly + 20 + i * 20
+        yy = ly + 20 + i * 18
         draw.text((rx, yy), num, font=font(14, bold=True, serif=True),
                   fill=NAVY)
         draw.text((rx + 52, yy + 2), label, font=font(10), fill=INK)
@@ -526,16 +647,16 @@ def draw_map_zone(draw):
 
 # ---------------------------------------------------------------- columns
 def draw_columns(draw):
-    draw.text((16, 606), "THE DAY IN BRIEF", font=font(14, bold=True),
+    draw.text((16, 568), "THE DAY IN BRIEF", font=font(14, bold=True),
               fill=NAVY)
-    draw.line([16, 624, W - 16, 624], fill=INK, width=1)
+    draw.line([16, 586, W - 16, 586], fill=INK, width=1)
     cols = [STORIES[3:14], STORIES[14:25], STORIES[25:36]]
     cw, gap = 322, 12
     shrunk = []
     for ci, col in enumerate(cols):
         x = 16 + ci * (cw + gap)
         for ri, (num, head, code, _) in enumerate(col):
-            y = 630 + ri * 22
+            y = 592 + ri * 20
             draw.text((x, y), f"{num}.", font=font(13, bold=True), fill=RED)
             # region chip
             cx = x + 24
@@ -551,19 +672,19 @@ def draw_columns(draw):
                 shrunk.append((num, f.size))
             draw.text((hx, y), head, font=f, fill=INK)
         if ci:
-            draw.line([x - gap // 2 - 1, 630, x - gap // 2 - 1, 866],
+            draw.line([x - gap // 2 - 1, 592, x - gap // 2 - 1, 806],
                       fill=(215, 205, 180), width=1)
     return shrunk
 
 
 # ---------------------------------------------------------------- timeline
 def draw_timeline(draw):
-    draw.line([16, 874, W - 16, 874], fill=INK, width=2)
-    draw.text((16, 882), "THE DAY\nIN UTC", font=font(11, bold=True),
+    draw.line([16, 890, W - 16, 890], fill=INK, width=2)
+    draw.text((16, 894), "THE DAY\nIN UTC", font=font(11, bold=True),
               fill=NAVY)
     x0, x1 = 170, 990
     step = (x1 - x0) / (len(TIMELINE) - 1)
-    ly = 898
+    ly = 906
     draw.line([x0, ly, x1, ly], fill=RULE, width=2)
     for i, (when, text) in enumerate(TIMELINE):
         cx = x0 + i * step
@@ -571,20 +692,20 @@ def draw_timeline(draw):
                      outline=WHITE, width=1)
         wf = font(11, bold=True)
         wlab = text_w(draw, when, wf)
-        draw.text((min(max(cx - wlab / 2, 16), W - 16 - wlab), 880), when,
+        draw.text((min(max(cx - wlab / 2, 16), W - 16 - wlab), 894), when,
                   font=wf, fill=NAVY)
         tf = font(10)
         line = text.replace("\n", " ")
         tlab = text_w(draw, line, tf)
-        draw.text((min(max(cx - tlab / 2, 16), W - 16 - tlab), 906), line,
+        draw.text((min(max(cx - tlab / 2, 16), W - 16 - tlab), 912), line,
                   font=tf, fill=INK)
 
 
 # ---------------------------------------------------------------- date check
 def draw_date_check(draw):
-    draw.rectangle([16, 920, W - 16, 984], fill=RED_SOFT, outline=RED,
+    draw.rectangle([16, 928, W - 16, 984], fill=RED_SOFT, outline=RED,
                    width=2)
-    draw.text((24, 924), "DATE CHECK — WHAT WE LEFT OUT ON PURPOSE",
+    draw.text((24, 932), "DATE CHECK — WHAT WE LEFT OUT ON PURPOSE",
               font=font(12, bold=True), fill=RED)
     f = font(10)
     left = ("LEFT OUT (earlier days): Baduy fire 19 Nov · Rohingya ruling "
@@ -592,12 +713,12 @@ def draw_date_check(draw):
             "Shenzhen summit 19–20 Nov · Hormuz tankers 21 Nov · "
             "BepiColombo 21 Nov · EU–Indonesia CEPA 21 Nov · Basra blast "
             "21 Nov · Nigeria boat 20 Nov")
-    draw_wrapped(draw, 24, 940, left, f, 472, INK, leading=12)
+    draw_wrapped(draw, 24, 948, left, f, 472, INK, leading=11)
     right = ("NOT YET: Nepal PM–Modi (Mon 23) · Belgium air-traffic "
              "strike (Mon 23) · Shenzhou-24 (~25 Nov).  CORRECTED: 186 "
              "drones, not 400 · India 720/9, not 629/6 · COP31 collapsed "
              "— no deal · Bahrain is an Iran CLAIM, unconfirmed.")
-    draw_wrapped(draw, 516, 940, right, f, 484, INK, leading=12)
+    draw_wrapped(draw, 516, 948, right, f, 484, INK, leading=11)
 
 
 # ---------------------------------------------------------------- footer
@@ -624,6 +745,7 @@ def build(out_path):
     draw_heroes(draw)
     draw_map_zone(draw)
     shrunk = draw_columns(draw)
+    draw_cards(draw)
     draw_timeline(draw)
     draw_date_check(draw)
     draw_footer(draw)
