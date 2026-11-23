@@ -18,7 +18,7 @@ mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
 ## The image
 
-`draw.py` renders `entry.png` (1024x1024, ~204 KB) with Pillow: masthead, three illustrated hero stories, a pinned world map, three headline columns, a UTC timeline, and a DATE CHECK box. All 35 stories were verified against at least two sources each as having happened or first been reported on Sunday 22 November 2026; stories from other days are listed in the DATE CHECK box as deliberately excluded. To re-render:
+`draw.py` renders `entry.png` (1024x1024, ~217 KB) with Pillow: masthead, three illustrated hero stories plus a row of four illustrated mini-cards (Verstappen, Cikande, Bahrain, Hong Kong), a pinned world map, three headline columns, a UTC timeline, and a DATE CHECK box. All 35 stories were verified against at least two sources each as having happened or first been reported on Sunday 22 November 2026; stories from other days are listed in the DATE CHECK box as deliberately excluded. To re-render:
 
 ```sh
 python3 draw.py entry.png
